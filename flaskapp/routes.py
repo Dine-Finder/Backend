@@ -11,6 +11,7 @@ from flaskapp import db, bcrypt
 from flask_login import login_user, current_user, logout_user, login_required
 
 from flaskapp.models import User, Post, Role, Test
+# from .resturants import get_coords
 
 
 posts = [
@@ -143,7 +144,16 @@ def login():
     else:
         return jsonify({'message': 'Login Failed'}), 401
     
-@routes.route('resturants', methods=["POST", "GET"])
-def resturants():
-    data = request.get_json()
+# @routes.route('resturants', methods=["POST", "GET"])
+# def resturants():
+    # if request.method == "POST":
+    #     data = request.get_json()
+    #     get_coords(data[])
+    # return jsonify({"response": "Recieved", "table": get_coords()})
     
+@routes.route('/connect', methods=["POST"])
+def connect():
+    if request.method == "POST":
+        data = request.get_json()  # Make sure to call .get_json()
+        print(data)  # Check the terminal where Flask is running to see this output
+        return jsonify({"response": "Received", "yourData": data})  # Respond with JSON
