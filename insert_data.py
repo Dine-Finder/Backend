@@ -12,7 +12,7 @@ load_dotenv()
 Base = declarative_base()
 
 class Restaurant(Base):
-    __tablename__ = 'restaurants'
+    __tablename__ = 'restaurant'
 
     restaurant_id = Column(String(22), primary_key=True)
     name = Column(String(255))
@@ -34,13 +34,13 @@ class Tags(Base):
 class Zones(Base):
     __tablename__ = 'zones'
 
-    zone_id = Column(String(22), primary_key=True)
+    zone_id = Column(Integer, primary_key=True)
     the_geom = Column(LONGTEXT, nullable=False)
     zone_name = Column(String(255))
     borough = Column(String(255))
 
-class Restaurant_Busyness(Base):
-    __tablename__ = 'restaurant_busyness'
+class Busyness(Base):
+    __tablename__ = 'busyness'
 
     restaurant_id = Column(String(22), primary_key=True)
     Monday_populartimes = Column(String(255))
@@ -52,7 +52,7 @@ class Restaurant_Busyness(Base):
     Sunday_populartimes = Column(String(255))
 
 class User(Base):
-    __tablename__ = 'users'
+    __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True)
     username = Column(String(80), unique=True, nullable=False)
@@ -63,16 +63,16 @@ class User(Base):
     role = relationship('Role', secondary='user_role', back_populates='user')
 
 class Post(Base):
-    __tablename__ = 'posts'
+    __tablename__ = 'post'
 
     id = Column(Integer, primary_key=True)
     title = Column(String(80), nullable=False)
     content = Column(Text, nullable=False)
     date_posted = Column(DateTime, nullable=False, default=datetime.datetime.now(datetime.timezone.utc))
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
 
 class Role(Base):
-    __tablename__ = 'roles'
+    __tablename__ = 'role'
 
     id = Column(Integer, primary_key=True)
     name = Column(String(10), nullable=False)
@@ -80,8 +80,8 @@ class Role(Base):
 
 user_role = Table(
     'user_role', Base.metadata,
-    Column('user_id', Integer, ForeignKey('users.id')),
-    Column('role_id', Integer, ForeignKey('roles.id'))
+    Column('user_id', Integer, ForeignKey('user.id')),
+    Column('role_id', Integer, ForeignKey('role.id'))
 )
 
 def load_data_into_table(file_path, model):
@@ -118,7 +118,7 @@ session = Session()
 load_data_into_table(csv_files['restaurants'], "restaurant")
 load_data_into_table(csv_files['tags'], "tags")
 load_data_into_table(csv_files['zones'], "zones")
-load_data_into_table(csv_files['restaurant_busyness'], "restaurant_busyness")
+load_data_into_table(csv_files['restaurant_busyness'], "busyness")
 load_data_into_table(csv_files['users'], "user")
 load_data_into_table(csv_files['posts'], "post")
 load_data_into_table(csv_files['roles'], "role")

@@ -1,15 +1,15 @@
+import json
 import pandas as pd
 import numpy as np
 import pickle
-from .models import Restaurant, Restaurant_Busyness, Tags, Zones
+import gzip
+from .models import Restaurant, Busyness, Tags, Zones
 from .import db
 from sqlalchemy.exc import SQLAlchemyError
 
 def fetch_data(Table):
     try:
-        station_data = db.session.query(Table).all()
-        return station_data
-    
+        return db.session.query(Table).all()
     except SQLAlchemyError as e:
         print(f"SQLAlchemy Error: {e}")
         return []
@@ -17,7 +17,13 @@ def fetch_data(Table):
         print(f"Unexpected error: {e}")
         return []
 
+def compute_distance(data, center_lat, center_lon, radius):
+    """Compute and return restaurants within the given radius."""
+    distances = data.apply(lambda row: haversine(center_lon, center_lat, row['longitude'], row['latitude']), axis=1)
+    return data[distances <= radius]
+
 def haversine(lon1, lat1, lon2, lat2):
+    """Calculate the great circle distance between two points on the earth."""
     lon1, lat1, lon2, lat2 = map(np.radians, [lon1, lat1, lon2, lat2])
     dlon = lon2 - lon1
     dlat = lat2 - lat1
@@ -26,11 +32,73 @@ def haversine(lon1, lat1, lon2, lat2):
     km = 6371 * c 
     return km
 
-def find_restaurants_within_radius(data, center_lat, center_lon, radius):
-    distances = data.apply(lambda row: haversine(center_lon, center_lat, row['longitude'], row['latitude']), axis=1)
-    return data[distances <= radius]['restaurant_id'].tolist()
+def filter_by_zone(data, zone_ids):
+    """Filter data based on zone IDs."""
+    return data[data['zone_id'].isin(zone_ids)]
 
-def get_coords(latitude, longitude, radius, day, time, localeBusyness, restaurantBusyness):
+def filter_by_time(filtered_restaurants, day, hour):
+    """Filter restaurants based on a specified day and time."""
+    number_to_day_mapping = {
+        0: 'sunday',
+        1: 'monday',
+        2: 'tuesday',
+        3: 'wednesday',
+        4: 'thursday',
+        5: 'friday',
+        6: 'saturday'
+    }
+    selected = []
+    for i in range(len(filtered_restaurants)):
+        day_column = f"{number_to_day_mapping[day]}_populartimes"
+        popularity_times = json.loads(filtered_restaurants.loc[i, day_column]) if filtered_restaurants.loc[i, day_column] else [0]*24
+        selected.append(popularity_times[hour] if hour < len(popularity_times) else 0)
+    filtered_restaurants["selected"] = selected
+    return filtered_restaurants
+
+def merge_additional_data(filtered_restaurants):
+    """Merge additional data like tags into the restaurant data."""
+    restaurant_ids = filtered_restaurants['restaurant_id'].tolist()
+    try:
+        restaurant_tags_data = db.session.query(Tags).filter(Tags.restaurant_id.in_(restaurant_ids)).all()
+        tag_data = pd.DataFrame([{"restaurant_id": rb.restaurant_id, "tags": rb.tags} for rb in restaurant_tags_data])
+        filtered_restaurants = pd.merge(filtered_restaurants, tag_data, on="restaurant_id", how="left")
+    except SQLAlchemyError as e:
+        print(f"SQLAlchemy Error: {e}")
+    return filtered_restaurants
+
+def select_filtered(column, busyness, df):
+    max_ = max(df[column])
+    min_ = min(df[column])
+
+    df['quite'] = df[column].apply(lambda x: 1 if x == min_ else 0)
+    df['average'] = df[column].apply(lambda x: 1 if min_ < x < max_ else 0)
+    df['busy'] = df[column].apply(lambda x: 1 if x == max_ else 0)
+
+    selected_local = {key for key, value in busyness.items() if value == 1 and key in ["Quiet", "Average", "Busy"]}
+
+    if busyness.get("importance") and busyness.get("importance").lower() == "required":
+        df = df[df[selected_local].any(axis=1)]
+
+    return df
+
+def predict_busyness(time, day, df):
+    with gzip.open('model/model.pkl.gz', 'rb') as handle:
+        model = pickle.load(handle)
+    
+    input_df = pd.DataFrame()
+    input_df["hour"] = [time] * len(df)
+    input_df["minute"] = [30] * len(df)
+    input_df["weekday"] = [day] * len(df)
+    input_df["LocationID"] = df["zone_id"].values
+
+    output = model.predict(input_df)
+    output[output < 0] = 1
+    output *= 10
+
+    return output
+
+
+def get_filters(latitude, longitude, radius, day, time, localeBusyness, restaurantBusyness):
     restaurant_data = pd.DataFrame([{
         "restaurant_id": restaurant.restaurant_id,
         "name": restaurant.name,
@@ -43,37 +111,43 @@ def get_coords(latitude, longitude, radius, day, time, localeBusyness, restauran
         "display_address": restaurant.display_address.replace('"', '').replace("'", ""),
         "zone_id": restaurant.zone_id
     } for restaurant in fetch_data(Restaurant)])
+    restaurant_data = compute_distance(restaurant_data, latitude, longitude, radius)
+    zones = set(restaurant_data["zone_id"])
 
-    restaurants_within_radius = find_restaurants_within_radius(restaurant_data, latitude, longitude, radius)
-
-    # zone_id = db.Column(db.String(22), primary_key=True)
-    # the_geom = db.Column(LONGTEXT)
-    # zone_name = db.Column(db.String(255))
-    # borough = db.Column(db.String(255))
     zones_data = pd.DataFrame([{
         "zone_id": zone.zone_id,
         "the_geom": zone.the_geom,
         "zone_name": zone.zone_name,
         "borough": zone.borough
-    } for zone in fetch_data(Zones)])
+    } for zone in fetch_data(Zones) if zone.zone_id in zones])
+    
 
-    model = pickle.load()
-    busyness = model.predict()
-
+    busyness = predict_busyness(time, day, zones_data)
     zones_data["busyness"] = busyness
+    zones_data = select_filtered("busyness", localeBusyness, zones_data)
+    
+    restaurant_data = filter_by_zone(restaurant_data, set(zones_data['zone_id']))
+    restaurant_ids = set(restaurant_data['restaurant_id'].tolist())
 
-    max_busyness = max(zones_data['busyness'])
-    min_busyness = min(zones_data['busyness'])
+    try:
+        restaurant_busyness_data = db.session.query(Busyness).filter(Busyness.restaurant_id.in_(restaurant_ids)).all()
+        busyness_data = pd.DataFrame([{
+            "restaurant_id": rb.restaurant_id,
+            "monday_populartimes": rb.Monday_populartimes,
+            "tuesday_populartimes": rb.Tuesday_populartimes,
+            "wednesday_populartimes": rb.Wednesday_populartimes,
+            "thursday_populartimes": rb.Thursday_populartimes,
+            "friday_populartimes": rb.Friday_populartimes,
+            "saturday_populartimes": rb.Saturday_populartimes,
+            "sunday_populartimes": rb.Sunday_populartimes,
+        } for rb in restaurant_busyness_data])
+    except SQLAlchemyError as e:
+        print(f"SQLAlchemy Error: {e}")
+        busyness_data = pd.DataFrame()
 
-    zones_data['busyness_division'] = zones_data['busyness'].apply(lambda x: {
-        "Quiet": 1 if x == min_busyness else 0,
-        "Average": 1 if min_busyness < x < max_busyness else 0,
-        "Busy": 1 if x == max_busyness else 0,
-    })
-
-    zones_data = zones_data.sort_values(by=['busyness_division', 'zone_name'], ascending=False)
-
-
-
-
-
+    restaurant_data = pd.merge(restaurant_data, busyness_data, on="restaurant_id", how="left")
+    restaurant_data = filter_by_time(restaurant_data, day, time)
+    restaurant_data = select_filtered("selected", restaurantBusyness, restaurant_data)
+    
+    restaurant_data = merge_additional_data(restaurant_data)
+    return restaurant_data.drop(columns=["selected", "quite", "average", "busy"])

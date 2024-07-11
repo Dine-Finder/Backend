@@ -11,7 +11,7 @@ from flaskapp import db, bcrypt
 from flask_login import login_user, current_user, logout_user, login_required
 
 from flaskapp.models import User, Post, Role, Test
-# from .resturants import get_coords
+from .resturants import get_filters
 
 
 posts = [
@@ -144,12 +144,26 @@ def login():
     else:
         return jsonify({'message': 'Login Failed'}), 401
     
-# @routes.route('resturants', methods=["POST", "GET"])
-# def resturants():
-    # if request.method == "POST":
-    #     data = request.get_json()
-    #     get_coords(data[])
-    # return jsonify({"response": "Recieved", "table": get_coords()})
+@routes.route('/resturants', methods=["POST", "GET"])
+def resturants():
+    if request.method == "POST":
+        data = request.get_json()
+        preferences = data.get("input", {})
+        
+        latitude = float(preferences["location"]["coordinates"][0])
+        longitude = float(preferences["location"]["coordinates"][1])
+        radius = float(preferences["location"]["radius"])
+        day = preferences["dayTime"]["day"]
+        time = int(preferences["dayTime"]["time"])
+        localBusyness = preferences["localeBusyness"]
+        restaurantBusyness = preferences["restaurantBusyness"]
+        
+        output = get_filters(latitude, longitude, radius, day, time, localBusyness, restaurantBusyness)
+        
+        result_json = output.to_json(orient="records")
+        return jsonify({"response": "Received", "output": json.loads(result_json)})
+    
+    return jsonify({"response": "Method Not Allowed"}), 405
     
 @routes.route('/connect', methods=["POST"])
 def connect():

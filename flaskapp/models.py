@@ -62,7 +62,7 @@ class Restaurant(db.Model):
         return f'<Restaurant {self.restaurant_id}, {self.name}, {self.rating}, {self.latitude}, {self.longitude}, {self.price}>'
 
 class Zones(db.Model):
-    zone_id = db.Column(db.String(22), primary_key=True)
+    zone_id = db.Column(db.Integer, primary_key=True)
     the_geom = db.Column(LONGTEXT)
     zone_name = db.Column(db.String(255))
     borough = db.Column(db.String(255))
@@ -74,7 +74,7 @@ class Tags(db.Model):
     restaurant_id = db.Column(db.String(22), primary_key=True)
     tags = db.Column(db.Text)
 
-class Restaurant_Busyness(db.Model):
+class Busyness(db.Model):
     restaurant_id = db.Column(db.String(22), primary_key=True)
     Monday_populartimes = db.Column(db.String(255))
     Tuesday_populartimes = db.Column(db.String(255))
