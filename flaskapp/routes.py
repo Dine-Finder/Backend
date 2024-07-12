@@ -41,21 +41,21 @@ def about():
     return render_template('about.html', title='About')
 
 
-@routes.route("/register", methods=['GET', 'POST'])
-def register_form():
-    if current_user.is_authenticated:
-        return redirect(url_for('routes.home'))
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data,
-                    password=bcrypt.generate_password_hash(form.password.data))
-        user_role = Role.query.filter_by(name="User").first()
-        user.role.append(user_role)
-        db.session.add(user)
-        db.session.commit()
-        flash(f'Account created for {form.username.data} successfully, YOu can now loggin', 'success')
-        return redirect(url_for('routes.login'))
-    return render_template('register.html', title='Register', form=form)
+# @routes.route("/register", methods=['GET', 'POST'])
+# def register_form():
+#     if current_user.is_authenticated:
+#         return redirect(url_for('routes.home'))
+#     form = RegistrationForm()
+#     if form.validate_on_submit():
+#         user = User(username=form.username.data, email=form.email.data,
+#                     password=bcrypt.generate_password_hash(form.password.data))
+#         user_role = Role.query.filter_by(name="User").first()
+#         user.role.append(user_role)
+#         db.session.add(user)
+#         db.session.commit()
+#         flash(f'Account created for {form.username.data} successfully, YOu can now loggin', 'success')
+#         return redirect(url_for('routes.login'))
+#     return render_template('register.html', title='Register', form=form)
 
 
 @routes.route("/admin-register", methods=['GET', 'POST'])
@@ -125,6 +125,20 @@ def get_user():
     else:
         return jsonify({'message': 'User not found'}), 404
 
+@routes.route('/register', methods=['POST'])
+@cross_origin()
+def register_user():
+    data = request.get_json()
+    username = data['username']
+    email = data['email']
+    password = data['password']
+    user = User(username=form.username.data, email=form.email.data,
+                password=bcrypt.generate_password_hash(form.password.data))
+    user_role = Role.query.filter_by(name="User").first()
+    user.role.append(user_role)
+    db.session.add(user)
+    db.session.commit()
+    return jsonify({"user":user})
 
 @routes.route('/login', methods=['POST'])
 @cross_origin()

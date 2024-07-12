@@ -6,6 +6,8 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.dialects.mysql import LONGTEXT
 
+from config import Constants
+
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -108,7 +110,8 @@ csv_files = {
     'user_role': 'table_data/user_role.csv'
 }
 
-DEV_DATABASE_URI = os.getenv("DEV_DATABASE_URI")
+# DEV_DATABASE_URI = os.getenv("DEV_DATABASE_URI")
+DEV_DATABASE_URI = Constants.DEV_DATABASE_URI
 engine = create_engine(DEV_DATABASE_URI)
 Base.metadata.create_all(engine)
 
