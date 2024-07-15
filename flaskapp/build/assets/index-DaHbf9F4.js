@@ -526,7 +526,7 @@ function print() { __p += __j.call(arguments, '') }
                     bg-black text-white \r
                     text-xs rounded-md\r
                     whitespace-nowrap\r
-                `,children:"More Info"})]})},nH=({ranking:e,info:t,showing:n,page:r,onClick:o,buttonPress:a})=>{const c=t[e-1+n*(r-1)],d=p=>{p.stopPropagation(),a(!0)};return S.jsxs("div",{className:`\r
+                `,children:"More Info"})]})},nH=({ranking:e,info:t,showing:n,page:r,onClick:o,buttonPress:a})=>{const c=t[e-1+n*(r-1)],d=p=>{p.stopPropagation(),window.open(c.url,"_blank","noopener,noreferrer")};return S.jsxs("div",{className:`\r
         hover:bg-light\r
         h-[180px]\r
         w-full\r
