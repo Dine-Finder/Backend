@@ -1,0 +1,5 @@
+/__pycache__
+.env
+/myenv
+/flaskapp/__pycache__
+/table_data
