@@ -15,7 +15,7 @@ login_manager = LoginManager()
 jwt = JWTManager()
 
 def createApp():
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder="../build", static_url_path="/")
     CORS(app)
     
     config_mode = os.getenv('FLASK_ENVIRONMENT', 'Development')
@@ -34,6 +34,9 @@ def createApp():
 
     from . import models
     from . import forms
+    @app.route('/')
+    def index():
+        return app.send_static_file("index.html")
 
     from .routes import routes
 

@@ -29,10 +29,3 @@ config_dict = {
     'Production': ProductionConfig,
     'Development': DevelopmentConfig
 }
-
-
-JCDecaux_dict = {
-    'NAME' : "Dublin",
-    'STATIONS' : "https://api.jcdecaux.com/vls/v1/stations",
-    'API_KEY' : os.getenv('db_api')
-}

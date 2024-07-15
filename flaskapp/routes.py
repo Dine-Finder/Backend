@@ -53,7 +53,7 @@ def is_strong_password(password):
     """Check if the password is strong."""
     return len(password) >= 8 and re.search(r"[a-zA-Z]", password) and re.search(r"\d", password)
 
-@routes.route('/login', methods=['POST'])
+@routes.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
     if not data or 'username' not in data or 'password' not in data:
@@ -66,7 +66,7 @@ def login():
     access_token = create_access_token(identity=user.id)
     return jsonify({'user': {'username': user.username, 'email': user.email}, 'access_token': access_token})
 
-@routes.route("/register", methods=['POST'])
+@routes.route("/api/register", methods=['POST'])
 def register_form():
     if current_user.is_authenticated:
         return jsonify({'message': 'Already authenticated'}), 400
@@ -95,7 +95,7 @@ def register_form():
 
 
 # User Logout
-@routes.route("/logout")
+@routes.route("/api/logout")
 def logout_function():
     if not current_user.is_authenticated:
         return jsonify({'message': 'No user is currently logged in'}), 403
@@ -113,7 +113,7 @@ def get_user():
         return jsonify({'username': user.username, 'email': user.email})
     return jsonify({'message': 'User not found'}), 404
 
-@routes.route('/resturants', methods=["POST", "GET"])
+@routes.route('/api/resturants', methods=["POST", "GET"])
 def resturants():
     if request.method == "POST":
         load_dotenv()
