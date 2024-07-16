@@ -1,0 +1,53 @@
+name: Build and Deploy Backend
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.12.3'
+
+      - name: Load Environment Variables
+        run: |
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
+          echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> $GITHUB_ENV
+          # Conditionally load database URIs based on the branch
+          if [[ $GITHUB_REF == 'refs/heads/main' ]]; then
+            echo "PROD_DATABASE_URI=${{ secrets.PROD_DATABASE_URI }}" >> $GITHUB_ENV
+          else
+            echo "DEV_DATABASE_URI=${{ secrets.DEV_DATABASE_URI }}" >> $GITHUB_ENV
+          fi
+          echo "REACT_APP_GOOGLE_MAPS_API_KEY=${{ secrets.REACT_APP_GOOGLE_MAPS_API_KEY }}" >> $GITHUB_ENV
+
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Deploy
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_KEY }}
+        run: |
+          rsync -av --delete \
+          --exclude '.env' \
+          --exclude 'venv/' \
+          --exclude 'myenv/' \
+          --exclude 'node_modules/' \
+          --exclude '.git/' \
+          --exclude 'tests/' \
+          ./ ubuntu@ec2-16-171-129-85.eu-north-1.compute.amazonaws.com:/home/ubuntu/Backend/
+
+        env:
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}

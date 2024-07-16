@@ -1,6 +1,7 @@
 ```
-BACKEND/
+Backend/
 ├── flaskapp/
+│   ├── build | react build
 │   ├── __init__.py
 │   ├── forms.py
 │   ├── models.py
