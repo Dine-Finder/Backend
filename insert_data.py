@@ -34,7 +34,7 @@ class Tags(Base):
 class Zones(Base):
     __tablename__ = 'zones'
 
-    zone_id = Column(String(22), primary_key=True)
+    zone_id = Column(Integer, primary_key=True)
     the_geom = Column(LONGTEXT, nullable=False)
     zone_name = Column(String(255))
     borough = Column(String(255))
