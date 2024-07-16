@@ -101,7 +101,7 @@ csv_files = {
     'restaurants': 'table_data/restaurant.csv',
     'tags': 'table_data/tags.csv',
     'zones': 'table_data/zones.csv',
-    'restaurant_busyness': 'table_data/restaurant_busyness.csv',
+    'restaurant_busyness': 'table_data/busyness.csv',
     'users': 'table_data/user.csv',
     'posts': 'table_data/post.csv',
     'roles': 'table_data/role.csv',

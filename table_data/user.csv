@@ -1,4 +1,6 @@
 id,username,email,image_file,password
 5,Bhargav,bhargavnikumbh99@gmail.com,default.jpg,$2b$12$EOSRFwMoQI6zexLhidnUJ.weiDUHO0b3tw590LReVHoG9oXyVYkxG
 6,admin,admin@gmail.com,default.jpg,$2b$12$7RbkGOhIgNyCIi4FX0EIMuHELLwekvqJFiWcXyMhyWTpQAFhdGixq
-7,asd,asd@gmail.com,default.jpg,$2b$12$6DZ0NxntNMLiDxHDh7Li1eargWMQy05PgcXH7tImQnbhCjSizneBW
+12,lawda,lawda@gmail.com,default.jpg,$2b$12$4gfp9.6wZ.cHDrrOkEs.eOVxTUPalf4gYPU3sBIdfNVvI6wzIwTa6
+13,ritwik,chutiya@gmail.com,default.jpg,$2b$12$TkvkDtIIatFZ7A/hCG9XmeLyYo.wiQtCLU4ggMuw7eMMgPeCtDRPm
+16,musaddique,musaddique@gmail.com,default.jpg,$2b$12$ygRBYTtzpv50g.beoR3.4.vl7chIOt1akXY2kPqTI6e/DxK1L.Mk2
