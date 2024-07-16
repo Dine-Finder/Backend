@@ -66,7 +66,7 @@ def merge_additional_data(filtered_restaurants):
         print(f"SQLAlchemy Error: {e}")
     return filtered_restaurants
 
-def select_filtered(column, busyness, df):
+def select_filtered(column, df):
     max_ = max(df[column])
     min_ = min(df[column])
 
@@ -74,12 +74,8 @@ def select_filtered(column, busyness, df):
     df['average'] = df[column].apply(lambda x: 1 if min_ < x < max_ else 0)
     df['busy'] = df[column].apply(lambda x: 1 if x == max_ else 0)
 
-    selected_local = {key for key, value in busyness.items() if value == 1 and key in {"Quiet", "Average", "Busy"}}
-
-    if busyness.get("importance") and busyness.get("importance").lower() == "required":
-        df = df[df[selected_local].any(axis=1)]
-
     return df
+
 
 def predict_busyness(time, day, df):
     with gzip.open('model/model.pkl.gz', 'rb') as handle:
@@ -105,6 +101,27 @@ def get_busyness(row):
     elif row['busy'] == 1:
         return 'busy'
     return None
+
+def sort_restaurants(column, type_business, df):
+    sort_order = {"busy": 0, "average": 0, "quiet": 0}
+    busyness = {key.lower() for key, value in type_business.items() if value == 1 and key.lower() in {"quiet", "average", "busy"}}
+    
+    if type_business.get("priority") and type_business.get("priority").lower() == "required":
+        df = df[df[f"{column}_busyness_string"].isin(busyness)].copy()  # Create a copy to avoid warnings
+        df.loc[:, f'sort_key_{column}'] = df[f'{column}_busyness_string'].apply(lambda x: 2 if x in busyness else 0)
+    else:
+        df.loc[:, f'sort_key_{column}'] = df[f'{column}_busyness_string'].apply(lambda x: 1 if x in busyness else 0)
+
+    if "busy" in busyness:
+        sort_order["busy"] += 1
+    if "average" in busyness:
+        sort_order["average"] += 1
+    if "quiet" in busyness:
+        sort_order["quiet"] += 1
+    
+    df.loc[:, f'sort_key_{column}'] += df[f'{column}_busyness_string'].map(sort_order).fillna(0)
+
+    return df
 
 
 def get_filters(latitude, longitude, radius, day, time, localeBusyness, restaurantBusyness):
@@ -135,7 +152,7 @@ def get_filters(latitude, longitude, radius, day, time, localeBusyness, restaura
     
     busyness = predict_busyness(time, day, zones_data)
     zones_data["zone_busyness"] = busyness
-    zones_data = select_filtered("zone_busyness", localeBusyness, zones_data)
+    zones_data = select_filtered("zone_busyness", zones_data)
 
     restaurant_data = filter_by_zone(restaurant_data, set(zones_data['zone_id']))
     restaurant_ids = set(restaurant_data['restaurant_id'].tolist())
@@ -164,12 +181,18 @@ def get_filters(latitude, longitude, radius, day, time, localeBusyness, restaura
     zones_data['zone_busyness_string'] = zones_data.apply(get_busyness, axis=1)
     zones_data.drop(['quiet', 'average', 'busy', 'the_geom'], axis=1, inplace=True)
 
-    restaurant_data = pd.merge(restaurant_data, zones_data, on="zone_id", how="left")
     restaurant_data = filter_by_time(restaurant_data, day, time)
 
-    restaurant_data = select_filtered("restaurant_busyness", restaurantBusyness, restaurant_data)
+    restaurant_data = select_filtered("restaurant_busyness", restaurant_data)
     restaurant_data['restaurant_busyness_string'] = restaurant_data.apply(get_busyness, axis=1)
     restaurant_data.drop(['quiet', 'average', 'busy'], axis=1, inplace=True)
+
+    restaurant_data = pd.merge(restaurant_data, zones_data, on="zone_id", how="left")
+
+    restaurant_data = sort_restaurants('restaurant', restaurantBusyness, restaurant_data)
+    restaurant_data = sort_restaurants('zone', localeBusyness, restaurant_data)
+    restaurant_data['sort_key'] = restaurant_data['sort_key_restaurant'] + restaurant_data['sort_key_zone']
+    restaurant_data = restaurant_data.sort_values(by='sort_key').drop(columns=['sort_key', 'sort_key_zone', 'sort_key_restaurant']).reset_index(drop=True)
 
     try:
         restaurant_tags_data = db.session.query(Tags).all()
@@ -179,6 +202,5 @@ def get_filters(latitude, longitude, radius, day, time, localeBusyness, restaura
     if tag_data.empty:
         return pd.DataFrame()
     restaurant_data = pd.merge(restaurant_data, tag_data, on="restaurant_id", how="left")
-    if len(restaurant_data) > 50:
-        return restaurant_data
+
     return restaurant_data
