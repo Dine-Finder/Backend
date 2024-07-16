@@ -12,7 +12,7 @@ load_dotenv()
 Base = declarative_base()
 
 class Restaurant(Base):
-    __tablename__ = 'restaurants'
+    __tablename__ = 'restaurant'
 
     restaurant_id = Column(String(22), primary_key=True)
     name = Column(String(255))
@@ -39,8 +39,8 @@ class Zones(Base):
     zone_name = Column(String(255))
     borough = Column(String(255))
 
-class Restaurant_Busyness(Base):
-    __tablename__ = 'restaurant_busyness'
+class Busyness(Base):
+    __tablename__ = 'busyness'
 
     restaurant_id = Column(String(22), primary_key=True)
     Monday_populartimes = Column(String(255))
@@ -52,7 +52,7 @@ class Restaurant_Busyness(Base):
     Sunday_populartimes = Column(String(255))
 
 class User(Base):
-    __tablename__ = 'users'
+    __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True)
     username = Column(String(80), unique=True, nullable=False)
@@ -63,7 +63,7 @@ class User(Base):
     role = relationship('Role', secondary='user_role', back_populates='user')
 
 class Post(Base):
-    __tablename__ = 'posts'
+    __tablename__ = 'post'
 
     id = Column(Integer, primary_key=True)
     title = Column(String(80), nullable=False)
@@ -72,7 +72,7 @@ class Post(Base):
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
 
 class Role(Base):
-    __tablename__ = 'roles'
+    __tablename__ = 'role'
 
     id = Column(Integer, primary_key=True)
     name = Column(String(10), nullable=False)
@@ -118,7 +118,7 @@ session = Session()
 load_data_into_table(csv_files['restaurants'], "restaurant")
 load_data_into_table(csv_files['tags'], "tags")
 load_data_into_table(csv_files['zones'], "zones")
-load_data_into_table(csv_files['restaurant_busyness'], "restaurant_busyness")
+load_data_into_table(csv_files['restaurant_busyness'], "busyness")
 load_data_into_table(csv_files['users'], "user")
 load_data_into_table(csv_files['posts'], "post")
 load_data_into_table(csv_files['roles'], "role")

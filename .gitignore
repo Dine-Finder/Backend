@@ -3,5 +3,5 @@
 .env
 /myenv
 /flaskapp/__pycache__
-/table_data
+# /table_data
 /venv
