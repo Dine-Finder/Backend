@@ -61,18 +61,18 @@ class Restaurant(db.Model):
     def __repr__(self):
         return f'<Restaurant {self.restaurant_id}, {self.name}, {self.rating}, {self.latitude}, {self.longitude}, {self.price}>'
 
-class Tags(db.Model):
-    restaurant_id = db.Column(db.String(22), primary_key=True)
-    tags = db.Column(db.Text)
-
 class Zones(db.Model):
-    zone_id = db.Column(db.String(22), primary_key=True)
+    zone_id = db.Column(db.Integer, primary_key=True)
     the_geom = db.Column(LONGTEXT)
     zone_name = db.Column(db.String(255))
     borough = db.Column(db.String(255))
 
     def __repr__(self):
         return f'<Zones {self.zone_id}, {self.zone_name}, {self.borough}>'
+    
+class Tags(db.Model):
+    restaurant_id = db.Column(db.String(22), primary_key=True)
+    tags = db.Column(db.Text)
 
 class Busyness(db.Model):
     restaurant_id = db.Column(db.String(22), primary_key=True)
@@ -89,3 +89,8 @@ user_role = db.Table(
     db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('role_id', db.Integer, db.ForeignKey('role.id'))
 )
+
+class Test:
+    def __init__(self, name, surname):
+        self.name = name
+        self.surname = surname
