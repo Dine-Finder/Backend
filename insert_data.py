@@ -69,7 +69,7 @@ class Post(Base):
     title = Column(String(80), nullable=False)
     content = Column(Text, nullable=False)
     date_posted = Column(DateTime, nullable=False, default=datetime.datetime.now(datetime.timezone.utc))
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
 
 class Role(Base):
     __tablename__ = 'role'
