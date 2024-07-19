@@ -25,8 +25,8 @@ services:
     depends_on:
       - flaskapp
 
-volumes:
-  mysql-data:  # Keep the volume declaration if you might use MySQL in the future
+# volumes:
+#   mysql-data:  # Keep the volume declaration if you might use MySQL in the future
 
 networks:
   default:
