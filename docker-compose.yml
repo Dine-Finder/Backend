@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+  flaskapp:
+    build:
+      context: .
+      dockerfile: Dockerfile-flask
+    volumes:
+      - ./flaskapp:/app/flaskapp
+      - ./model:/app/model
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile-nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf  # Mount the custom Nginx configuration file
+      - /etc/letsencrypt:/etc/letsencrypt  # Mount the Let's Encrypt certificates
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - flaskapp
+
+volumes:
+  mysql-data:  # Keep the volume declaration if you might use MySQL in the future
+
+networks:
+  default:
+    driver: bridge
+
+
+#  mysql: (This section can be commented out or removed)
+#    image: mysql:5.7
+#    environment:
+#      MYSQL_ROOT_PASSWORD: mushu
+#      MYSQL_DATABASE: flaskapp
+#    volumes:
+#      - mysql-data:/var/lib/mysql
+#    ports:
+#      - "3306:3306"
