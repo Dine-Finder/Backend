@@ -11,6 +11,8 @@ services:
       - .env
     ports:
       - "8000:8000"
+    networks:
+      - default
 
   nginx:
     build:
@@ -24,13 +26,13 @@ services:
       - "443:443"
     depends_on:
       - flaskapp
-
-# volumes:
-#   mysql-data:  # Keep the volume declaration if you might use MySQL in the future
+    networks:
+      - default
 
 networks:
   default:
     driver: bridge
+
 
 
 #  mysql: (This section can be commented out or removed)
