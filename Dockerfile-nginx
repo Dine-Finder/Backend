@@ -11,4 +11,4 @@ COPY nginx.conf /etc/nginx/conf.d/
 EXPOSE 80 443
 
 # Start Nginx when the container has provisioned
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["tail", "-f", "/dev/null"]
