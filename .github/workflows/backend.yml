@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,11 +20,11 @@ jobs:
 
     - name: Copy files to EC2
       run: |
-        rsync -avz -e "ssh -o StrictHostKeyChecking=no" --exclude '.env' --exclude '.git/' ./ ubuntu@ec2-16-171-129-85.eu-north-1.compute.amazonaws.com:/home/ubuntu/Backend/
+        rsync -avz -e "ssh -o StrictHostKeyChecking=no" --exclude '.env' --exclude '.git/' ./ ubuntu@ec2-16-171-170-58.eu-north-1.compute.amazonaws.com:/home/ubuntu/Backend/
 
     - name: Build and Deploy on EC2
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@ec2-16-171-129-85.eu-north-1.compute.amazonaws.com << 'EOF'
+        ssh -o StrictHostKeyChecking=no ubuntu@ec2-16-171-170-58.eu-north-1.compute.amazonaws.com << 'EOF'
           cd /home/ubuntu/Backend/
           docker-compose down
           docker rmi $(docker images -q) -f
