@@ -18,7 +18,8 @@ services:
       context: .
       dockerfile: Dockerfile-nginx
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf  # Mount the custom Nginx configuration file
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro  # Mount the main Nginx configuration file
+      - ./musaddique.conf:/etc/nginx/conf.d/musaddique.conf:ro  # Mount the custom server configuration file
       - /etc/letsencrypt:/etc/letsencrypt  # Mount the Let's Encrypt certificates
     ports:
       - "80:80"
