@@ -104,6 +104,7 @@ def get_user():
 @routes.route('/api/restaurants', methods=["POST", "GET"])
 def resturants():
     if request.method == "POST":
+        print("hello world")
         data = request.get_json()
         preferences = data.get("input", {})
         neighborhood = preferences["location"]["neighborhood"]
