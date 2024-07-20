@@ -12,4 +12,10 @@ Backend/
 ├── app.py
 ├── config.py
 ├── requirements.txt
+├── Dockerfile-flask
+├── Dockerfile-nginx
+├── docker-compose.yml
+├── nginx.conf
+├── musaddique.conf
+
 ```
