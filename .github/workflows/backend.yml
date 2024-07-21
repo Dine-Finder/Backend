@@ -54,6 +54,7 @@ jobs:
         ssh -o StrictHostKeyChecking=no ubuntu@13.48.125.40 << 'EOF'
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           cd /home/ubuntu/Backend/
+          git pull origin main
           docker-compose pull
           docker-compose up -d --build
           docker image prune -a -f
