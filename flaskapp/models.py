@@ -1,8 +1,3 @@
-import datetime
-import json
-
-from pyttsx3 import engine
-from sqlalchemy import text, Text
 from sqlalchemy.dialects.mysql import LONGTEXT
 
 from flaskapp import db, login_manager
