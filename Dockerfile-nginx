@@ -4,6 +4,9 @@ FROM nginx:latest
 # Remove the default Nginx configuration file
 RUN rm /etc/nginx/conf.d/default.conf
 
+# Copy the React build files to the appropriate directory
+COPY ./flaskapp/build /usr/share/nginx/html
+
 # Expose ports 80 and 443 to the outside
 EXPOSE 80 443
 
