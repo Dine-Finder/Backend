@@ -1,7 +1,12 @@
 ```
 Backend/
 ├── flaskapp/
-│   ├── build | react build
+│   ├── build
+│         ├── assets/
+│         ├── img/
+│         ├── index.html
+│         ├── logo.svg
+├
 │   ├── __init__.py
 │   ├── models.py
 │   ├── restaurants.py
