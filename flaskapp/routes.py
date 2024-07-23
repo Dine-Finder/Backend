@@ -2,7 +2,7 @@ import re
 import json
 import os
 from datetime import datetime, timezone
-from flask import Blueprint, jsonify, request, url_for, current_app, send_from_directory, render_template
+from flask import Blueprint, jsonify, request, url_for, current_app
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from flask_login import current_user, logout_user
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
@@ -45,7 +45,7 @@ def send_verification_email(user):
     msg.body = f'Please click on the link to verify your email address: {verify_url}'
     current_app.extensions['mail'].send(msg)
 
-@routes.route('/verify_email/<token>', methods=['GET'])
+@routes.route('/api/verify_email/<token>', methods=['GET'])
 def verify_email(token):
     serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
     try:
@@ -183,23 +183,17 @@ def send_password_reset_email(user):
     msg.body = f'Please click on the link to reset your password: {reset_url}'
     current_app.extensions['mail'].send(msg)
 
-@routes.route('/reset_password/<token>', methods=['GET'])
+@routes.route('/api/reset_password/<token>', methods=['GET'])
 def reset_password(token):
-    try:
-        return render_template('reset_password.html', token=token)
-    except Exception as e:
-        return jsonify({'message': 'The reset link is invalid or has expired.'}), 400
+    return
 
-@routes.route('/confirm_reset_password/<token>', methods=['GET', 'POST'])
+@routes.route('/api/confirm_reset_password/<token>', methods=['GET', 'POST'])
 def confirm_reset_password(token):
     serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
-    print("outside try")
     try:
-        print("inside try")
         email = serializer.loads(token, salt=current_app.config['SECURITY_PASSWORD_SALT'], max_age=3600)
         user = User.query.filter_by(email=email).first()
         if request.method == 'POST':
-            print("inside requests")
             data = request.get_json()
             new_password = data.get('password')
             confirm_password = data.get('confirm_password')
