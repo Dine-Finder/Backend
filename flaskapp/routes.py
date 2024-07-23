@@ -2,7 +2,7 @@ import re
 import json
 import os
 from datetime import datetime, timezone
-from flask import Blueprint, jsonify, request, url_for, current_app
+from flask import Blueprint, jsonify, request, url_for, current_app, send_from_directory, render_template
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from flask_login import current_user, logout_user
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
@@ -64,7 +64,7 @@ def verify_email(token):
         if user and not user.is_confirmed:
             db.session.delete(user)
             db.session.commit()
-            return jsonify({'message': 'Verification link expired. Registration not completed, please sign up again.'}), 410
+            return jsonify({'message': 'Verification link expired. Registration not completed, please register again.'}), 410
     except BadSignature:
         return jsonify({'message': 'Invalid or expired token'}), 400
 
@@ -94,8 +94,9 @@ def register_form():
         return jsonify({'message': 'Invalid email format'}), 422
     if not is_strong_password(data['password']):
         return jsonify({'message': 'Password must be at least 8 characters long and include letters and numbers'}), 422
-    user = User.query.filter_by(email=data['email']).first()
-    if user:
+    if User.query.filter_by(username=data['username']).first():
+        return jsonify({'message': 'Username already exists. Please choose a different username.'}), 409
+    if User.query.filter_by(email=data['email']).first():
         return jsonify({'message': 'Email already used'}), 409
     hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
     new_user = User(username=data['username'], email=data['email'], password=hashed_password, is_confirmed=False)
@@ -158,3 +159,62 @@ def restaurants():
             return jsonify({"response": "No Restaurants from selected preference"})
 
     return jsonify({"message": "GET method not allowed"}), 405
+
+
+@routes.route('/api/forgot_password', methods=['POST'])
+def forgot_password():
+    data = request.get_json()
+    email = data.get('email')
+    if not email:
+        return jsonify({'message': 'Email is required'}), 400
+
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return jsonify({'message': 'User with this email does not exist'}), 404
+
+    send_password_reset_email(user)
+    return jsonify({'message': 'Password reset email sent successfully'}), 200
+
+def send_password_reset_email(user):
+    serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+    token = serializer.dumps(user.email, salt=current_app.config['SECURITY_PASSWORD_SALT'])
+    reset_url = url_for('routes.reset_password', token=token, _external=True)
+    msg = Message('Password Reset Request', sender=current_app.config['MAIL_USERNAME'], recipients=[user.email])
+    msg.body = f'Please click on the link to reset your password: {reset_url}'
+    current_app.extensions['mail'].send(msg)
+
+@routes.route('/reset_password/<token>', methods=['GET'])
+def reset_password(token):
+    try:
+        return render_template('reset_password.html', token=token)
+    except Exception as e:
+        return jsonify({'message': 'The reset link is invalid or has expired.'}), 400
+
+@routes.route('/confirm_reset_password/<token>', methods=['GET', 'POST'])
+def confirm_reset_password(token):
+    serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+    print("outside try")
+    try:
+        print("inside try")
+        email = serializer.loads(token, salt=current_app.config['SECURITY_PASSWORD_SALT'], max_age=3600)
+        user = User.query.filter_by(email=email).first()
+        if request.method == 'POST':
+            print("inside requests")
+            data = request.get_json()
+            new_password = data.get('password')
+            confirm_password = data.get('confirm_password')
+
+            if not new_password or not confirm_password:
+                return jsonify({'message': 'Password and confirm password are required'}), 400
+            if new_password != confirm_password:
+                return jsonify({'message': 'Passwords do not match'}), 400
+            if not is_strong_password(new_password):
+                return jsonify({'message': 'Password must be at least 8 characters long and include letters and numbers'}), 422
+            
+            hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
+            user.password = hashed_password
+            db.session.commit()
+            return jsonify({'message': 'Password reset successful. You can now log in.'}), 200
+
+    except Exception as e:
+        return jsonify({'message': 'The reset link is invalid or has expired.'}), 400
