@@ -183,12 +183,12 @@ def send_password_reset_email(user):
     msg.body = f'Please click on the link to reset your password: {reset_url}'
     current_app.extensions['mail'].send(msg)
 
-@routes.route('/reset_password/<token>', methods=['GET'])
-def reset_password(token):
-    try:
-        return render_template('reset_password.html', token=token)
-    except Exception as e:
-        return jsonify({'message': 'The reset link is invalid or has expired.'}), 400
+# @routes.route('/reset_password/<token>', methods=['GET'])
+# def reset_password(token):
+#     try:
+#         return render_template('reset_password.html', token=token)
+#     except Exception as e:
+#         return jsonify({'message': 'The reset link is invalid or has expired.'}), 400
 
 @routes.route('/api/confirm_reset_password/<token>', methods=['GET', 'POST'])
 def confirm_reset_password(token):
