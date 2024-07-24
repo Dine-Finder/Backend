@@ -54,7 +54,7 @@ jobs:
 
     - name: Pull and Deploy on EC2
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@13.48.125.40 << 'EOF'
+        ssh -o StrictHostKeyChecking=no student@137.43.49.28 << 'EOF'
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           cd /home/ubuntu/Backend/
           git pull origin main
