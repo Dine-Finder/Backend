@@ -127,14 +127,17 @@ def restaurants():
         data = request.get_json()
         preferences = data.get("input", {})
         neighborhood = preferences["location"]["neighborhood"]
-        if neighborhood != "":
-            place_name = neighborhood + ", Manhattan, NY"
-            geocode_result = current_app.extensions['gmaps'].geocode(place_name)
-            if geocode_result:
-                latitude = geocode_result[0]['geometry']['location']['lat']
-                longitude = geocode_result[0]['geometry']['location']['lng']
-            else:
-                return jsonify({"response": "No Restaurants from selected preference"})
+        location_type = preferences["location"]["locationType"]
+
+        if not location_type or location_type == "Neighborhood":
+            if neighborhood != "":
+                place_name = neighborhood + ", Manhattan, NY"
+                geocode_result = current_app.extensions['gmaps'].geocode(place_name)
+                if geocode_result:
+                    latitude = geocode_result[0]['geometry']['location']['lat']
+                    longitude = geocode_result[0]['geometry']['location']['lng']
+                else:
+                    return jsonify({"response": "No Restaurants from selected preference"})
         else:
             latitude = preferences["location"]["coordinates"][0]
             longitude = preferences["location"]["coordinates"][1]
