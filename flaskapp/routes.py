@@ -2,7 +2,7 @@ import re
 import json
 import os
 from datetime import datetime, timezone
-from flask import Blueprint, jsonify, request, url_for, current_app
+from flask import Blueprint, jsonify, request, url_for, current_app, render_template
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from flask_login import current_user, logout_user
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
@@ -45,7 +45,7 @@ def send_verification_email(user):
     msg.body = f'Please click on the link to verify your email address: {verify_url}'
     current_app.extensions['mail'].send(msg)
 
-@routes.route('/api/verify_email/<token>', methods=['GET'])
+@routes.route('/verify_email/<token>', methods=['GET'])
 def verify_email(token):
     serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
     try:
@@ -183,9 +183,12 @@ def send_password_reset_email(user):
     msg.body = f'Please click on the link to reset your password: {reset_url}'
     current_app.extensions['mail'].send(msg)
 
-@routes.route('/api/reset_password/<token>', methods=['GET'])
+@routes.route('/reset_password/<token>', methods=['GET'])
 def reset_password(token):
-    return
+    try:
+        return render_template('reset_password.html', token=token)
+    except Exception as e:
+        return jsonify({'message': 'The reset link is invalid or has expired.'}), 400
 
 @routes.route('/api/confirm_reset_password/<token>', methods=['GET', 'POST'])
 def confirm_reset_password(token):
