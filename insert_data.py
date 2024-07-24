@@ -51,16 +51,16 @@ class Busyness(Base):
     Saturday_populartimes = Column(String(255))
     Sunday_populartimes = Column(String(255))
 
-# class User(Base):
-#     __tablename__ = 'user'
+class User(Base):
+    __tablename__ = 'user'
 
-#     id = Column(Integer, primary_key=True)
-#     username = Column(String(80), unique=True, nullable=False)
-#     email = Column(String(120), unique=True, nullable=False)
-#     image_file = Column(String(20), nullable=False, default='default.jpg')
-#     password = Column(String(60), nullable=False)
-#     is_confirmed = Column(Boolean, nullable=False, default=False)
-#     confirmed_on = Column(DateTime, nullable=True)
+    id = Column(Integer, primary_key=True)
+    username = Column(String(80), unique=True, nullable=False)
+    email = Column(String(120), unique=True, nullable=False)
+    image_file = Column(String(20), nullable=False, default='default.jpg')
+    password = Column(String(60), nullable=False)
+    is_confirmed = Column(Boolean, nullable=False, default=False)
+    confirmed_on = Column(DateTime, nullable=True)
 
 
 def load_data_into_table(file_path, model):
@@ -95,7 +95,7 @@ load_data_into_table(csv_files['restaurants'], "restaurant")
 load_data_into_table(csv_files['tags'], "tags")
 load_data_into_table(csv_files['zones'], "zones")
 load_data_into_table(csv_files['restaurant_busyness'], "busyness")
-# load_data_into_table(csv_files['users'], "user")
+load_data_into_table(csv_files['users'], "user")
 
 
 print("Data loaded successfully.")
