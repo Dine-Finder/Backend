@@ -178,17 +178,17 @@ def forgot_password():
 def send_password_reset_email(user):
     serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
     token = serializer.dumps(user.email, salt=current_app.config['SECURITY_PASSWORD_SALT'])
-    reset_url = f"https://musaddique.site/reset_password/{token}"
+    reset_url = url_for('routes.reset_password', token=token, _external=True)
     msg = Message('Password Reset Request', sender=current_app.config['MAIL_USERNAME'], recipients=[user.email])
     msg.body = f'Please click on the link to reset your password: {reset_url}'
     current_app.extensions['mail'].send(msg)
 
-# @routes.route('/reset_password/<token>', methods=['GET'])
-# def reset_password(token):
-    # try:
-    #     return render_template('reset_password.html', token=token)
-    # except Exception as e:
-    #     return jsonify({'message': 'The reset link is invalid or has expired.'}), 400
+@routes.route('/reset_password/<token>', methods=['GET'])
+def reset_password(token):
+    try:
+        return render_template('reset_password.html', token=token)
+    except Exception as e:
+        return jsonify({'message': 'The reset link is invalid or has expired.'}), 400
 
 @routes.route('/api/confirm_reset_password/<token>', methods=['GET', 'POST'])
 def confirm_reset_password(token):
