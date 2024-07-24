@@ -56,7 +56,7 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no student@137.43.49.28 << 'EOF'
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          cd /home/ubuntu/Backend/
+          cd /home/student/Backend/
           git pull origin main
           docker-compose down
           docker-compose pull
