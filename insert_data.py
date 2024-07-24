@@ -81,7 +81,7 @@ csv_files = {
     'tags': 'table_data/tags.csv',
     'zones': 'table_data/zones.csv',
     'restaurant_busyness': 'table_data/busyness.csv',
-    # 'users': 'table_data/user.csv',
+    'users': 'table_data/user.csv',
 }
 
 DEV_DATABASE_URI = os.getenv("DEV_DATABASE_URI")
