@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <title>Email Verification</title>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #1B1A21;
+        }
+        .text-orange {
+            color: #F59E0B;
+        }
+        .btn-gradient {
+            background: linear-gradient(to right, #d47c35, #e65406);
+            color: #ffffff;
+        }
+        .btn-gradient:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto px-4 py-8">
+        <input type="hidden" id="response_code" value="{{ response_code }}">
+        <input type="hidden" id="response_message" value="{{ response_message }}">
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const responseCode = parseInt(document.getElementById('response_code').value, 10);
+            const responseMessage = document.getElementById('response_message').value;
+
+            let icon;
+            let title;
+
+            switch (responseCode) {
+                case 404:
+                    icon = 'error';
+                    title = 'Invalid Code';
+                    break;
+                case 409:
+                    icon = 'warning';
+                    title = 'Account Already Verified';
+                    break;
+                case 200:
+                    icon = 'success';
+                    title = 'Success';
+                    break;
+                case 410:
+                    icon = 'error';
+                    title = 'Link Expired';
+                    break;
+                case 400:
+                    icon = 'error';
+                    title = 'Invalid Token';
+                    break;
+                default:
+                    icon = 'error';
+                    title = 'Unknown Error';
+                    break;
+            }
+
+            Swal.fire({
+                icon: icon,
+                title: title,
+                text: responseMessage,
+            }).then(() => {
+                window.location.href = 'https://musaddique.site';
+            });
+        });
+    </script>
+</body>
+</html>

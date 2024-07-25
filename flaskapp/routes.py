@@ -52,21 +52,32 @@ def verify_email(token):
         email = serializer.loads(token, salt=current_app.config['SECURITY_PASSWORD_SALT'], max_age=3600)
         user = User.query.filter_by(email=email).first()
         if user is None:
-            return jsonify({'message': 'Invalid token or user does not exist'}), 404
+            code = 404
+            message = "Invalid token or user does not exist"
+            return render_template('verify_email.html', response_code=code, response_message=message)
         if user.is_confirmed:
-            return jsonify({'message': 'Account already verified.'}), 409
+            code = 409
+            message = "Account already verified."
+            return render_template('verify_email.html', response_code=code, response_message=message)
         user.is_confirmed = True
         user.confirmed_on = datetime.now(timezone.utc)
         db.session.commit()
-        return jsonify({'message': 'Email verified successfully. You can now log in.'}), 200
+        code = 200
+        message = "Email verified successfully. You can now log in."
+        return render_template('verify_email.html', response_code=code, response_message=message)
     except SignatureExpired:
         user = User.query.filter_by(email=email).first()
         if user and not user.is_confirmed:
             db.session.delete(user)
             db.session.commit()
-            return jsonify({'message': 'Verification link expired. Registration not completed, please register again.'}), 410
+            code = 410
+            message = "Verification link expired. Registration not completed, please register again."
+            return render_template('verify_email.html', response_code=code, response_message=message)
     except BadSignature:
-        return jsonify({'message': 'Invalid or expired token'}), 400
+        code = 400
+        message = "Invalid or expired token"
+        return render_template('verify_email.html', response_code=code, response_message=message)
+    
 
 @routes.route('/api/signin', methods=['POST'])
 def login():
