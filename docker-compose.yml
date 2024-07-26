@@ -19,7 +19,7 @@ services:
       dockerfile: Dockerfile-nginx
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./musaddique.conf:/etc/nginx/conf.d/musaddique.conf:ro
+      - ./dinefinder.conf:/etc/nginx/conf.d/dinefinder.conf:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
     ports:
       - "80:80"
@@ -37,8 +37,8 @@ networks:
 #  mysql: (This section can be commented out or removed)
 #    image: mysql:5.7
 #    environment:
-#      MYSQL_ROOT_PASSWORD: mushu
-#      MYSQL_DATABASE: flaskapp
+#      MYSQL_ROOT_PASSWORD: 
+#      MYSQL_DATABASE: 
 #    volumes:
 #      - mysql-data:/var/lib/mysql
 #    ports:
