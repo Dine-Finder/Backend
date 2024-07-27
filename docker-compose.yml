@@ -1,31 +1,33 @@
 services:
   flaskapp:
-    image: musaddique333/backend-flaskapp:latest
+    build:
+      context: .
+      dockerfile: Dockerfile-flask
     volumes:
       - ./flaskapp:/app/flaskapp
       - ./model:/app/model
     environment:
-      MAIL_SERVER: ${{ secrets.MAIL_SERVER }}
-      MAIL_PORT: ${{ secrets.MAIL_PORT }}
-      MAIL_USE_TLS: ${{ secrets.MAIL_USE_TLS }}
-      MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
-      MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
-      SECURITY_PASSWORD_SALT: ${{ secrets.SECURITY_PASSWORD_SALT }}
-      SECRET_KEY: ${{ secrets.SECRET_KEY }}
-      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-      DEV_DATABASE_URI: ${{ secrets.DEV_DATABASE_URI }}
-      PROD_DATABASE_URI: ${{ secrets.PROD_DATABASE_URI }}
-      MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-      MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
-      FLASK_ENVIRONMENT: ${{ secrets.FLASK_ENVIRONMENT }}
-      REACT_APP_GOOGLE_MAPS_API_KEY: ${{ secrets.REACT_APP_GOOGLE_MAPS_API_KEY }}
+      - MAIL_SERVER=${MAIL_SERVER}
+      - MAIL_PORT=${MAIL_PORT}
+      - MAIL_USE_TLS=${MAIL_USE_TLS}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - SECURITY_PASSWORD_SALT=${SECURITY_PASSWORD_SALT}
+      - SECRET_KEY=${SECRET_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - DEV_DATABASE_URI=${DEV_DATABASE_URI}
+      - PROD_DATABASE_URI=${PROD_DATABASE_URI}
+      - FLASK_ENVIRONMENT=${FLASK_ENVIRONMENT}
+      - REACT_APP_GOOGLE_MAPS_API_KEY=${REACT_APP_GOOGLE_MAPS_API_KEY}
     ports:
       - "8000:8000"
     networks:
       - default
 
   nginx:
-    image: musaddique333/backend-nginx:latest
+    build:
+      context: .
+      dockerfile: Dockerfile-nginx
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ./dinefinder.conf:/etc/nginx/conf.d/dinefinder.conf:ro
@@ -41,14 +43,3 @@ services:
 networks:
   default:
     driver: bridge
-
-
-#  mysql: (This section can be commented out or removed)
-#    image: mysql:5.7
-#    environment:
-#      MYSQL_ROOT_PASSWORD: 
-#      MYSQL_DATABASE: 
-#    volumes:
-#      - mysql-data:/var/lib/mysql
-#    ports:
-#      - "3306:3306"
