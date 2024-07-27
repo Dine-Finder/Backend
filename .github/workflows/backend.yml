@@ -52,27 +52,12 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.DEPLOY_KEY }}
 
-    - name: Deploy to EC2
-      env:
-        MAIL_SERVER: ${{ secrets.MAIL_SERVER }}
-        MAIL_PORT: ${{ secrets.MAIL_PORT }}
-        MAIL_USE_TLS: ${{ secrets.MAIL_USE_TLS }}
-        MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
-        MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
-        SECURITY_PASSWORD_SALT: ${{ secrets.SECURITY_PASSWORD_SALT }}
-        SECRET_KEY: ${{ secrets.SECRET_KEY }}
-        JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-        DEV_DATABASE_URI: ${{ secrets.DEV_DATABASE_URI }}
-        PROD_DATABASE_URI: ${{ secrets.PROD_DATABASE_URI }}
-        MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-        MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
-        FLASK_ENVIRONMENT: ${{ secrets.FLASK_ENVIRONMENT }}
-        REACT_APP_GOOGLE_MAPS_API_KEY: ${{ secrets.REACT_APP_GOOGLE_MAPS_API_KEY }}
+    - name: Pull and Deploy on EC2
       run: |
         ssh -o StrictHostKeyChecking=no student@137.43.49.28 << 'EOF'
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           cd /home/student/Backend/
           git pull origin main
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker-compose down
           docker-compose pull
           docker-compose up -d --build

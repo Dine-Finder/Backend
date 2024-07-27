@@ -6,19 +6,8 @@ services:
     volumes:
       - ./flaskapp:/app/flaskapp
       - ./model:/app/model
-    environment:
-      - MAIL_SERVER=${MAIL_SERVER}
-      - MAIL_PORT=${MAIL_PORT}
-      - MAIL_USE_TLS=${MAIL_USE_TLS}
-      - MAIL_USERNAME=${MAIL_USERNAME}
-      - MAIL_PASSWORD=${MAIL_PASSWORD}
-      - SECURITY_PASSWORD_SALT=${SECURITY_PASSWORD_SALT}
-      - SECRET_KEY=${SECRET_KEY}
-      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
-      - DEV_DATABASE_URI=${DEV_DATABASE_URI}
-      - PROD_DATABASE_URI=${PROD_DATABASE_URI}
-      - FLASK_ENVIRONMENT=${FLASK_ENVIRONMENT}
-      - REACT_APP_GOOGLE_MAPS_API_KEY=${REACT_APP_GOOGLE_MAPS_API_KEY}
+    env_file:
+      - .env
     ports:
       - "8000:8000"
     networks:
