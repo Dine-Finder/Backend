@@ -58,15 +58,6 @@ For more information and to explore the DineFinder platform, visit our website: 
 ### Introduction
 Welcome to the Dine Finder project! This application helps users discover and explore a wide variety of restaurants based on their preferences and location. The backend setup guide will walk you through the necessary steps to get your development environment up and running smoothly.
 
-### Video Tutorial
-For a comprehensive step-by-step guide on setting up the Dine Finder frontend, watch the video tutorial below:
-
-<p align="center">
-  <a href="https://youtu.be/I2ugolvJmPA">
-    <img src="https://connectthedotspr.com/wp-content/uploads/2018/06/watch-video-icon.jpg" alt="Watch the video">
-  </a>
-</p>
-
 ### Key Features
 - **✨ User-friendly interface** for easy navigation and restaurant discovery
 - **🌟 Personalized recommendations** based on user preferences and location
