@@ -1,6 +1,59 @@
-## Dine Finder Project Backend Setup Guide
+# Dine Finder Backend Setup Guide
 
-https://dinefinder.site/
+<div align="center">
+    <img src="https://github.com/Dine-Finder/.github/blob/main/profile/images/logo.png" alt="logo" width="150">
+</div>
+
+For more information and to explore the DineFinder platform, visit our website: <a href="https://dinefinder.site/" style="color: #1d72b8; text-decoration: none; font-weight: bold;">DineFinder Website</a>.
+
+## Video Tutorial of web app
+
+<p align="center">
+  <a href="https://youtu.be/I2ugolvJmPA">
+    <img src="https://connectthedotspr.com/wp-content/uploads/2018/06/watch-video-icon.jpg" alt="Watch the video">
+  </a>
+</p>
+
+## GitHub Badges
+
+![GitHub issues](https://img.shields.io/github/issues/Dine-Finder/Backend) 
+![GitHub forks](https://img.shields.io/github/forks/Dine-Finder/Backend)
+![GitHub stars](https://img.shields.io/github/stars/Dine-Finder/Backend)
+![GitHub license](https://img.shields.io/github/license/Dine-Finder/Backend)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/Dine-Finder/Backend)
+![GitHub last commit](https://img.shields.io/github/last-commit/Dine-Finder/Backend)
+
+## Tech Stack Badges 
+
+![Python](https://img.shields.io/badge/Python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Material UI](https://img.shields.io/badge/Material--UI-0081CB?style=for-the-badge&logo=material-ui&logoColor=white)
+![Chakra UI](https://img.shields.io/badge/Chakra--UI-319795?style=for-the-badge&logo=chakra-ui&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-00000F?style=for-the-badge&logo=mysql&logoColor=white)
+![Numpy](https://img.shields.io/badge/Numpy-013243?style=for-the-badge&logo=numpy&logoColor=white)
+![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)
+![Scipy](https://img.shields.io/badge/SciPy-8CAAE6?style=for-the-badge&logo=scipy&logoColor=white)
+![TensorFlow](https://img.shields.io/badge/TensorFlow-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white)
+![Google](https://img.shields.io/badge/Google-4285F4?style=for-the-badge&logo=google&logoColor=white)
+![BERT](https://img.shields.io/badge/BERT-4285F4?style=for-the-badge&logo=bert&logoColor=white)
+![Hugging Face](https://img.shields.io/badge/Hugging_Face-FFD400?style=for-the-badge&logo=hugging-face&logoColor=white)
+![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-9C3D3D?style=for-the-badge&logo=sqlalchemy&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![HTML](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![npm](https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white)
+![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)
+![AWS EC2](https://img.shields.io/badge/AWS_EC2-FF9900?style=for-the-badge&logo=amazon-ec2&logoColor=white)
+![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)
+![NGINX](https://img.shields.io/badge/NGINX-009639?style=for-the-badge&logo=nginx&logoColor=white)
+![Gunicorn](https://img.shields.io/badge/Gunicorn-499848?style=for-the-badge&logo=gunicorn&logoColor=white)
+![Bash](https://img.shields.io/badge/Bash-4EAA25?style=for-the-badge&logo=gnu-bash&logoColor=white)
 
 ### Introduction
 Welcome to the Dine Finder project! This application helps users discover and explore a wide variety of restaurants based on their preferences and location. The backend setup guide will walk you through the necessary steps to get your development environment up and running smoothly.
@@ -19,6 +72,24 @@ For a comprehensive step-by-step guide on setting up the Dine Finder frontend, w
 - **🌟 Personalized recommendations** based on user preferences and location
 - **📸 Detailed restaurant information**, including menus, photos, and reviews
 - **🍽️ Reservation and ordering capabilities** for a seamless dining experience
+
+
+## Gallery
+
+### Mobile View 
+<div align="center">
+    <img src="https://github.com/Dine-Finder/.github/blob/main/profile/images/mobile1.jpg" alt="Mobile View 1" width="200">
+    <img src="https://github.com/Dine-Finder/.github/blob/main/profile/images/mobile2.jpg" alt="Mobile View 2" width="200">
+    <img src="https://github.com/Dine-Finder/.github/blob/main/profile/images/mobile3.jpg" alt="Mobile View 3" width="200">
+    <img src="https://github.com/Dine-Finder/.github/blob/main/profile/images/mobile4.jpg" alt="Mobile View 4" width="200">
+</div>
+
+### Desktop View 
+<div align="center">
+    <img src="https://github.com/Dine-Finder/.github/blob/main/profile/images/desktop1.png" alt="Desktop View 1" width="400">
+    <img src="https://github.com/Dine-Finder/.github/blob/main/profile/images/desktop2.png" alt="Desktop View 2" width="400">
+    <img src="https://github.com/Dine-Finder/.github/blob/main/profile/images/desktop3.png" alt="Desktop View 3" width="400">
+</div>
 
 ### Overview
 This guide provides detailed instructions for setting up the environment and deploying the Dine Finder application across Windows, macOS, and Linux operating systems. By following these steps, you'll have a solid foundation to start building and testing your application.
